@@ -45,7 +45,7 @@ class Host_Cache {
   }
 
   public function core_updates( $transient ) {
-    if ( false === $this->options['host'] || !isset( $transient->updates ) ) {
+    if ( !isset( $transient->updates ) ) {
       return $transient;
     }
 
@@ -73,7 +73,7 @@ class Host_Cache {
   }
 
   public function http_request_always_allow( $result, $host, $url ) {
-    if ( false !== $this->options['host'] && $this->options['host'] === $host ) {
+    if ( $this->options['host'] === $host ) {
       return true;
     }
 
@@ -102,7 +102,7 @@ class Host_Cache {
   }
 
   public function plugin_updates( $transient ) {
-    if ( false === $this->options['host'] || !isset( $transient->response ) ) {
+    if ( !isset( $transient->response ) ) {
       return $transient;
     }
 
@@ -119,7 +119,7 @@ class Host_Cache {
   }
 
   public function theme_updates( $transient ) {
-    if ( false === $this->options['host'] || !isset( $transient->response ) ) {
+    if ( !isset( $transient->response ) ) {
       return $transient;
     }
 
