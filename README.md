@@ -6,9 +6,9 @@ This plugin is designed to cache downloads of WordPress plugins, themes, and upd
 
 This plugin is designed to implemented by a sysadmin. It relies on a nginx proxy to be established to proxy requests through. This plugin simply assists in routing all the downloads through proxy host. The benefits of which include faster download speeds and reduced bandwidth costs across a network of servers.
 
-The plugin expects a hostname of `wpcache.host` to be resolvable by the server. This is commonly done through modifications to the `/etc/hosts` file.
+This plugin expects a hostname of `wpcache.host` to be resolvable by the server. This is commonly done through modifications to the `/etc/hosts` file.
 
-(include config sample here)
+An example nginx proxy config can be found in [server.conf](https://github.com/ctalkington/host-cache/blob/master/server.conf).
 
 ### Origins
 
