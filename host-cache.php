@@ -17,16 +17,20 @@ class Host_Cache {
     $this->options = wp_parse_args( $args, array(
       'host' => 'wpcache.host',
       'ssl' => false,
+      'catchall' => false,
       'arg_nocache' => 'nocache'
     ) );
 
-    add_action( 'init', array( $this, 'init' ) );
+    add_action( 'init', array( $this, 'init' ), 10 );
   }
 
   public function init() {
-    add_filter( 'pre_set_site_transient_update_core', array( $this, 'core_updates' ) );
-    add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'plugin_updates' ) );
-    add_filter( 'pre_set_site_transient_update_themes', array( $this, 'theme_updates' ) );
+    add_filter( 'pre_set_site_transient_update_core', array( $this, 'core_updates' ), 10 );
+    add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'plugin_updates' ), 10 );
+    add_filter( 'pre_set_site_transient_update_themes', array( $this, 'theme_updates' ), 10 );
+
+    add_filter( 'plugins_api_result', array( $this, 'plugins_api_result' ), 10, 2 );
+    add_filter( 'themes_api_result', array( $this, 'themes_api_result' ), 10, 2 );
 
     add_filter( 'pre_http_request', array( $this, 'http_request_catchall' ), 10, 3 );
     add_filter( 'http_request_host_is_external', array( $this, 'http_request_always_allow' ), 10, 3 );
@@ -81,7 +85,7 @@ class Host_Cache {
   }
 
   public function http_request_catchall( $result, $request_args, $url ) {
-    if ( !$this->is_download_url( $url ) ) {
+    if ( !$this->options['catchall'] || !$this->is_download_url( $url ) ) {
       return $result;
     }
 
@@ -118,6 +122,20 @@ class Host_Cache {
     return $transient;
   }
 
+  public function plugins_api_result( $result, $action ) {
+    if ( is_wp_error( $result ) ) {
+      return $result;
+    }
+
+    if ( 'plugin_information' === $action ) {
+      if ( $this->is_download_url( $result->download_link ) ) {
+        $result->download_link = $this->cached_download_url( $result->download_link );
+      }
+    }
+
+    return $result;
+  }
+
   public function theme_updates( $transient ) {
     if ( !isset( $transient->response ) ) {
       return $transient;
@@ -133,6 +151,20 @@ class Host_Cache {
     }
 
     return $transient;
+  }
+
+  public function themes_api_result( $result, $action ) {
+    if ( is_wp_error( $result ) ) {
+      return $result;
+    }
+
+    if ( 'theme_information' === $action ) {
+      if ( $this->is_download_url( $result->download_link ) ) {
+        $result->download_link = $this->cached_download_url( $result->download_link );
+      }
+    }
+
+    return $result;
   }
 
 }
