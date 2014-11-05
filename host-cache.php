@@ -15,7 +15,9 @@ class Host_Cache {
 
   public function __construct( $args = array() ) {
     $this->options = wp_parse_args( $args, array(
-      'host' => 'wpcache.host'
+      'host' => 'wpcache.host',
+      'ssl' => false,
+      'arg_nocache' => 'nocache'
     ) );
 
     add_action( 'init', array( $this, 'init' ) );
@@ -31,7 +33,19 @@ class Host_Cache {
   }
 
   private function cached_download_url( $url ) {
-    return str_replace( array( 'downloads.wordpress.org', 'wordpress.org' ), $this->options['host'], $url );
+    $url = str_replace( array( 'downloads.wordpress.org', 'wordpress.org' ), $this->options['host'], $url );
+
+    if ( $this->options['ssl'] ) {
+      $url = str_replace( 'http://', 'https://', $url );
+    } else {
+      $url = str_replace( 'https://', 'http://', $url );
+    }
+
+    if ( !preg_match( '/\d+(\.\d+)+/m', $url ) ) {
+      $url = add_query_arg( $this->options['arg_nocache'], 1, $url );
+    }
+
+    return $url;
   }
 
   public function core_updates( $transient ) {
