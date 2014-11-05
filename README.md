@@ -1,6 +1,6 @@
 # Host Cache
 
-This plugin is designed to cache downloads of WordPress plugins, themes, and updates from the WordPress.org repo.
+This plugin is designed to pass downloads of WordPress plugins, themes, and updates from the official WordPress.org repo through a proxy cache.
 
 ### Configuration Required
 
