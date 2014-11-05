@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Host Cache
- * Description: Downloads core updates, plugins, and themes from local proxy cache for faster speeds.
+ * Description: Downloads WordPress plugins, themes, and updates from official repo through a proxy cache.
  * Version: 0.1.0
  * Author: Talkington Tech
  * Author URI: http://talkingtontech.com
