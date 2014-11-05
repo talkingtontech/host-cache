@@ -33,13 +33,9 @@ class Host_Cache {
   }
 
   private function cached_download_url( $url ) {
+    $scheme = $this->options['ssl'] ? 'https' : 'http';
     $url = str_replace( array( 'downloads.wordpress.org', 'wordpress.org' ), $this->options['host'], $url );
-
-    if ( $this->options['ssl'] ) {
-      $url = str_replace( 'http://', 'https://', $url );
-    } else {
-      $url = str_replace( 'https://', 'http://', $url );
-    }
+    $url = preg_replace( '#^\w+://#', $scheme . '://', $url );
 
     if ( !preg_match( '/\d+(\.\d+)+/m', $url ) ) {
       $url = add_query_arg( $this->options['arg_nocache'], 1, $url );
